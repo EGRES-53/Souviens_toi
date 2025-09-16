@@ -1,63 +1,33 @@
-import React, { useState } from 'react';
-import { Trash2, FileText, Image as ImageIcon, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
+import React from 'react';
+import { Image } from 'lucide-react';
 
-interface Media {
-  id: string;
-  title: string;
-  url: string;
-  type: 'image' | 'document';
-  uploaded_at?: string;
-  created_at?: string;
-}
-
-interface MediaGalleryProps {
-  media: Media[];
-  onDelete: (id: string) => void;
-}
-
-const MediaGallery: React.FC<MediaGalleryProps> = ({ media, onDelete }) => {
+const GalleryPage: React.FC = () => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-      {media.map((item) => (
-        <div key={item.id} className="relative group">
-          <div className="aspect-square rounded-lg overflow-hidden bg-neutral-100">
-            {item.type === 'image' ? (
-              <img 
-                src={item.url} 
-                alt={item.title} 
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center p-4">
-                <FileText className="h-12 w-12 mb-2 text-neutral-400" />
-                <p className="text-sm text-neutral-600 text-center">{item.title}</p>
-              </div>
-            )}
-          </div>
-          <div className="mt-2">
-            <div className="flex justify-between items-center">
-              <p className="text-sm text-neutral-600 truncate flex-1">{item.title}</p>
-              <button
-                onClick={() => onDelete(item.id)}
-                className="ml-2 p-1.5 text-neutral-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
-                title="Supprimer"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </div>
-            {item.uploaded_at && (
-              <p className="text-xs text-neutral-500 mt-1">
-                Ajouté le {new Date(item.uploaded_at).toLocaleDateString('fr-FR', {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric'
-                })}
-              </p>
-            )}
+    <div className="min-h-screen bg-[#f8f3e9] py-8 px-4 sm:px-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold font-serif text-primary-800 mb-2">
+              Galerie multimédia
+            </h1>
+            <p className="text-neutral-600">
+              Explore les documents et photos de ton histoire familiale
+            </p>
           </div>
         </div>
-      ))}
+
+        <div className="bg-white rounded-lg shadow-vintage p-6 border border-neutral-200">
+          <div className="text-center my-16">
+            <Image className="h-16 w-16 text-neutral-400 mx-auto mb-4" />
+            <h3 className="text-xl font-serif font-bold mb-2">Galerie en développement</h3>
+            <p className="text-neutral-600">
+              Cette fonctionnalité sera bientôt disponible
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
-export default MediaGallery;
+
+export default GalleryPage;
