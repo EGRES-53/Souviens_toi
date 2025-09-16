@@ -61,4 +61,3 @@ const MediaGallery: React.FC<MediaGalleryProps> = ({ media, onDelete }) => {
   );
 };
 export default MediaGallery;
-export default MediaGallery;
