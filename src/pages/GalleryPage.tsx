@@ -5,6 +5,13 @@ const GalleryPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#f8f3e9] py-8 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col sm:import React from 'react';
+import { Image, Upload } from 'lucide-react';
+
+const GalleryPage: React.FC = () => {
+  return (
+    <div className="min-h-screen bg-[#f8f3e9] py-8 px-4 sm:px-6">
+      <div className="max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold font-serif text-primary-800 mb-2">
@@ -33,10 +40,6 @@ const GalleryPage: React.FC = () => {
         </div>
       </div>
     </div>
-  );
-};
-
-export default GalleryPage;
   );
 };
 
