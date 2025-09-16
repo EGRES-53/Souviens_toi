@@ -3,7 +3,7 @@ import { Image, Upload } from 'lucide-react';
 
 const GalleryPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-[#f8f3e9] py-8 px-4 sm:px-6">
+   <div className="min-h-screen bg-amber-50 py-8 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col sm:import React from 'react';
 import { Image, Upload } from 'lucide-react';
