@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
+import { supabase } from '../lib/supabase';
 
 interface AuthContextType {
   currentUser: any;
@@ -23,19 +24,49 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(false);
 
   const login = async (email: string, password: string) => {
-    console.log('Login:', email);
-    // Simulation pour l'instant
-    setCurrentUser({ email, id: '1' });
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      
+      if (error) throw error;
+      setCurrentUser(data.user);
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
   };
 
   const register = async (email: string, password: string, displayName: string) => {
-    console.log('Register:', email, displayName);
-    // Simulation pour l'instant
-    setCurrentUser({ email, displayName, id: '1' });
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: displayName,
+          },
+        },
+      });
+      
+      if (error) throw error;
+      setCurrentUser(data.user);
+    } catch (error) {
+      console.error('Register error:', error);
+      throw error;
+    }
   };
 
   const logout = async () => {
-    setCurrentUser(null);
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      setCurrentUser(null);
+    } catch (error) {
+      console.error('Logout error:', error);
+      throw error;
+    }
   };
 
   const value = {
