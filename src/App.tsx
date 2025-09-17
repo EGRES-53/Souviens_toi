@@ -16,7 +16,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/timeline" element={<TimelinePage />} />
+        <Route path="/timeline" element={<TimelinePagePublic />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/gallery" element={<GalleryPage />} />
