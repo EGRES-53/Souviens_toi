@@ -1,36 +1,47 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
 import Button from '../components/ui/Button';
-import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
+import { ArrowLeft, Calendar, User, Edit, Trash2, BookOpen } from 'lucide-react';
 
 interface Story {
   id: string;
   title: string;
   content: string;
   created_at: string;
+  updated_at: string;
   created_by: string;
+  profiles?: {
+    full_name: string;
+  };
 }
 
 const StoryPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { currentUser } = useAuth();
+  const { showToast } = useToast();
   const [story, setStory] = useState<Story | null>(null);
   const [loading, setLoading] = useState(true);
-  const { showToast } = useToast();
-  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchStory();
+    if (id) {
+      fetchStory();
+    }
   }, [id]);
 
   const fetchStory = async () => {
-    if (!id) return;
-
     try {
       const { data, error } = await supabase
         .from('stories')
-        .select('*')
+        .select(`
+          *,
+          profiles (
+            full_name
+          )
+        `)
         .eq('id', id)
         .single();
 
@@ -46,7 +57,11 @@ const StoryPage: React.FC = () => {
   };
 
   const handleDelete = async () => {
-    if (!story) return;
+    if (!story || !currentUser || story.created_by !== currentUser.id) return;
+
+    if (!confirm('Êtes-vous sûr de vouloir supprimer ce récit ? Cette action est irréversible.')) {
+      return;
+    }
 
     try {
       const { error } = await supabase
@@ -66,7 +81,7 @@ const StoryPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="min-h-screen bg-[#f8f3e9] flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600"></div>
       </div>
     );
@@ -76,9 +91,13 @@ const StoryPage: React.FC = () => {
     return (
       <div className="min-h-screen bg-[#f8f3e9] py-8 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto text-center">
+          <BookOpen className="h-16 w-16 text-neutral-400 mx-auto mb-4" />
           <h1 className="text-3xl font-bold font-serif text-primary-800 mb-4">
             Récit non trouvé
           </h1>
+          <p className="text-neutral-600 mb-6">
+            Ce récit n'existe pas ou a été supprimé.
+          </p>
           <Link to="/stories">
             <Button variant="primary" icon={<ArrowLeft size={18} />}>
               Retour aux récits
@@ -88,6 +107,10 @@ const StoryPage: React.FC = () => {
       </div>
     );
   }
+
+  const isOwner = currentUser && story.created_by === currentUser.id;
+  const wordCount = story.content.trim().split(/\s+/).filter(word => word.length > 0).length;
+  const readingTime = Math.ceil(wordCount / 200); // Assuming 200 words per minute
 
   return (
     <div className="min-h-screen bg-[#f8f3e9] py-8 px-4 sm:px-6">
@@ -99,43 +122,127 @@ const StoryPage: React.FC = () => {
           </Link>
         </div>
 
-        <div className="bg-white rounded-lg shadow-vintage p-6 sm:p-8">
-          <div className="flex justify-between items-start mb-6">
-            <h1 className="text-3xl font-bold font-serif text-primary-800">
-              {story.title}
-            </h1>
-            <div className="flex gap-2">
-              <Link to={`/stories/${story.id}/edit`}>
-                <Button variant="outline" size="sm" icon={<Edit size={16} />}>
-                  Modifier
-                </Button>
-              </Link>
-              <Button
-                variant="outline"
-                size="sm"
-                icon={<Trash2 size={16} />}
-                onClick={handleDelete}
-                className="text-red-600 hover:bg-red-50"
-              >
-                Supprimer
-              </Button>
+        <article className="bg-white rounded-lg shadow-vintage p-6 sm:p-8 border border-primary-100">
+          {/* Header */}
+          <header className="mb-8">
+            <div className="flex justify-between items-start mb-4">
+              <h1 className="text-3xl sm:text-4xl font-bold font-serif text-primary-800 leading-tight">
+                {story.title}
+              </h1>
+              {isOwner && (
+                <div className="flex gap-2 ml-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    icon={<Edit size={16} />}
+                    onClick={() => navigate(`/story/${story.id}/edit`)}
+                  >
+                    Modifier
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    icon={<Trash2 size={16} />}
+                    onClick={handleDelete}
+                    className="text-red-600 hover:bg-red-50 border-red-300"
+                  >
+                    Supprimer
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-4 text-sm text-neutral-600 mb-6">
+              <div className="flex items-center">
+                <User className="h-4 w-4 mr-1" />
+                {story.profiles?.full_name || 'Utilisateur'}
+              </div>
+              <div className="flex items-center">
+                <Calendar className="h-4 w-4 mr-1" />
+                Publié le {new Date(story.created_at).toLocaleDateString('fr-FR', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </div>
+              {story.updated_at !== story.created_at && (
+                <div className="flex items-center">
+                  <Edit className="h-4 w-4 mr-1" />
+                  Modifié le {new Date(story.updated_at).toLocaleDateString('fr-FR', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center gap-4 text-xs text-neutral-500 pb-6 border-b border-neutral-200">
+              <span>{wordCount} mots</span>
+              <span>•</span>
+              <span>{readingTime} min de lecture</span>
+              <span>•</span>
+              <span>{story.content.length} caractères</span>
+            </div>
+          </header>
+
+          {/* Content */}
+          <div className="prose prose-lg max-w-none">
+            <div className="text-neutral-800 leading-relaxed whitespace-pre-wrap">
+              {story.content}
             </div>
           </div>
 
-          <div className="text-sm text-neutral-500 mb-6">
-            Ajouté le {new Date(story.created_at).toLocaleDateString('fr-FR', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            })}
-          </div>
+          {/* Footer */}
+          <footer className="mt-12 pt-8 border-t border-neutral-200">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div className="text-sm text-neutral-600">
+                <p className="font-medium mb-1">Merci d'avoir lu ce récit familial</p>
+                <p>Chaque histoire préservée enrichit notre héritage commun</p>
+              </div>
+              <div className="flex gap-3">
+                <Link to="/stories">
+                  <Button variant="outline">
+                    Voir tous les récits
+                  </Button>
+                </Link>
+                <Link to="/stories/add">
+                  <Button variant="primary">
+                    Écrire un récit
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </footer>
+        </article>
 
-          <div className="prose max-w-none">
-            {story.content.split('\n').map((paragraph, index) => (
-              <p key={index} className="mb-4 text-neutral-700 leading-relaxed">
-                {paragraph}
-              </p>
-            ))}
+        {/* Related Stories or Call to Action */}
+        <div className="mt-8 bg-gradient-to-r from-primary-50 to-amber-50 border border-primary-200 rounded-lg p-6">
+          <div className="text-center">
+            <BookOpen className="h-12 w-12 text-primary-600 mx-auto mb-4" />
+            <h3 className="text-xl font-serif font-bold text-primary-800 mb-2">
+              Continue l'aventure
+            </h3>
+            <p className="text-neutral-700 mb-6">
+              Découvre d'autres récits ou partage tes propres souvenirs familiaux
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/stories">
+                <Button variant="outline">
+                  📚 Tous les Récits
+                </Button>
+              </Link>
+              <Link to="/stories/add">
+                <Button variant="primary">
+                  ✍️ Écrire un Récit
+                </Button>
+              </Link>
+              <Link to="/timeline">
+                <Button variant="outline">
+                  📅 Voir la Timeline
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
