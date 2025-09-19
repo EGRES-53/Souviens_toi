@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import HomePage from './pages/HomePage';
-import TimelinePage from './pages/TimelinePage';
+import TimelinePagePublic from './pages/TimelinePagePublic';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import GalleryPage from './pages/GalleryPage';
@@ -17,7 +17,6 @@ import StoryPage from './pages/StoryPage';
 import NotFoundPage from './pages/NotFoundPage';
 import TestPage from './pages/TestPage';
 import AdminDashboard from './pages/AdminDashboard';
-import TimelinePagePublic from './pages/TimelinePagePublic';
 
 function App() {
   return (
@@ -27,7 +26,7 @@ function App() {
           <Route index element={<HomePage />} />
           
           {/* Public routes */}
-          <Route path="timeline" element={<TimelinePage />} />
+          <Route path="timeline" element={<TimelinePagePublic />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
           
