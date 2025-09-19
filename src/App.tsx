@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Navbar from './components/layout/Navbar';
+import Layout from './components/layout/Layout';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 import HomePage from './pages/HomePage';
 import TimelinePage from './pages/TimelinePage';
 import LoginPage from './pages/LoginPage';
@@ -8,21 +9,83 @@ import RegisterPage from './pages/RegisterPage';
 import GalleryPage from './pages/GalleryPage';
 import StoriesPage from './pages/StoriesPage';
 import ProfilePage from './pages/ProfilePage';
+import EventPage from './pages/EventPage';
+import EditEventPage from './pages/EditEventPage';
+import AddEventPage from './pages/AddEventPage';
+import AddStoryPage from './pages/AddStoryPage';
+import StoryPage from './pages/StoryPage';
 import NotFoundPage from './pages/NotFoundPage';
+import TestPage from './pages/TestPage';
+import AdminDashboard from './pages/AdminDashboard';
+import TimelinePagePublic from './pages/TimelinePagePublic';
 
 function App() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/timeline" element={<TimelinePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/gallery" element={<GalleryPage />} />
-        <Route path="/stories" element={<StoriesPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="*" element={<NotFoundPage />} />
+        <Route path="/" element={<Layout />}>
+          <Route index element={<HomePage />} />
+          
+          {/* Public routes */}
+          <Route path="timeline" element={<TimelinePage />} />
+          <Route path="login" element={<LoginPage />} />
+          <Route path="register" element={<RegisterPage />} />
+          
+          {/* Protected routes */}
+          <Route path="gallery" element={
+            <ProtectedRoute>
+              <GalleryPage />
+            </ProtectedRoute>
+          } />
+          <Route path="stories" element={
+            <ProtectedRoute>
+              <StoriesPage />
+            </ProtectedRoute>
+          } />
+          <Route path="stories/add" element={
+            <ProtectedRoute>
+              <AddStoryPage />
+            </ProtectedRoute>
+          } />
+          <Route path="story/:id" element={
+            <ProtectedRoute>
+              <StoryPage />
+            </ProtectedRoute>
+          } />
+          <Route path="profile" element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          } />
+          <Route path="event/:id" element={
+            <ProtectedRoute>
+              <EventPage />
+            </ProtectedRoute>
+          } />
+          <Route path="event/:id/edit" element={
+            <ProtectedRoute>
+              <EditEventPage />
+            </ProtectedRoute>
+          } />
+          <Route path="timeline/add" element={
+            <ProtectedRoute>
+              <AddEventPage />
+            </ProtectedRoute>
+          } />
+          <Route path="admin" element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="test" element={
+            <ProtectedRoute>
+              <TestPage />
+            </ProtectedRoute>
+          } />
+          
+          {/* 404 */}
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
       </Routes>
     </div>
   );
