@@ -208,4 +208,3 @@ const StoriesPage: React.FC = () => {
 
 export default StoriesPage;
 
-export default StoriesPage;
