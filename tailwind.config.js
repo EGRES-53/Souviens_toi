@@ -1,0 +1,70 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          50: '#f8f5f1',
+          100: '#f0e9df',
+          200: '#e0d0bd',
+          300: '#d0b69c',
+          400: '#c09c7b',
+          500: '#b0825a',
+          600: '#9a6b44',
+          700: '#805636',
+          800: '#66422c',
+          900: '#4c3024',
+        },
+        accent: {
+          50: '#f0f9ff',
+          100: '#e0f3fe',
+          200: '#b9e5fc',
+          300: '#7dd1fc',
+          400: '#39bef8',
+          500: '#0ca1eb',
+          600: '#0180c9',
+          700: '#0167a2',
+          800: '#045785',
+          900: '#0a476f',
+        },
+        secondary: {
+          50: '#f5f3ff',
+          100: '#ede9fe',
+          200: '#ddd6fe',
+          300: '#c4b5fd',
+          400: '#a78bfa',
+          500: '#8b5cf6',
+          600: '#7c3aed',
+          700: '#6d28d9',
+          800: '#5b21b6',
+          900: '#4c1d95',
+        },
+        neutral: {
+          50: '#fafaf9',
+          100: '#f5f5f4',
+          200: '#e7e5e4',
+          300: '#d7d3d0',
+          400: '#a8a29e',
+          500: '#78716c',
+          600: '#57534e',
+          700: '#44403c',
+          800: '#292524',
+          900: '#1c1917',
+        },
+      },
+      fontFamily: {
+        serif: ['Playfair Display', 'serif'],
+        sans: ['Lato', 'sans-serif'],
+      },
+      backgroundImage: {
+        'paper-texture': "url('https://www.transparenttextures.com/patterns/old-paper.png')",
+      },
+      boxShadow: {
+        'vintage': '0 4px 6px -1px rgba(102, 66, 44, 0.1), 0 2px 4px -1px rgba(102, 66, 44, 0.06)',
+        'vintage-lg': '0 10px 15px -3px rgba(102, 66, 44, 0.1), 0 4px 6px -2px rgba(102, 66, 44, 0.05)',
+      },
+    },
+  },
+  plugins: [],
+};
