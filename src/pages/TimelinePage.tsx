@@ -178,28 +178,33 @@ const TimelinePage: React.FC = () => {
                 icon={<Search className="text-neutral-400" size={18} />}
               />
             </div>
-           <div className="flex gap-2">
-  <Link to="/event/new">
-    <Button variant="primary" icon={<Plus size={18} />}>
-      Ajouter un événement
-    </Button>
-  </Link>
-  <div className="flex gap-2">
-    <Button
-      variant="secondary"
-      icon={<Eye size={18} />}
-      onClick={() => setShowPDF(true)}
-    >
-      Aperçu PDF
-    </Button>
-    <TimelinePDF 
-      events={filteredEvents} 
-      mode="download"
-      fileName={`chronologie-familiale-${format(new Date(), 'yyyy-MM-dd')}.pdf`}
-    />
+          <div className="w-full">
+  <div className="flex justify-center gap-3">
+    <Link to="/event/new" className="inline-flex">
+      <Button variant="primary" icon={<Plus size={18} />}>
+        Ajouter un événement
+      </Button>
+    </Link>
+
+    <span className="inline-flex">
+      <Button
+        variant="secondary"
+        icon={<Eye size={18} />}
+        onClick={() => setShowPDF(true)}
+      >
+        Aperçu PDF
+      </Button>
+    </span>
+
+    <span className="inline-flex">
+      <TimelinePDF 
+        events={filteredEvents} 
+        mode="download"
+        fileName={`chronologie-familiale-${format(new Date(), 'yyyy-MM-dd')}.pdf`}
+      />
+    </span>
   </div>
 </div>
-
 
           </div>
 
