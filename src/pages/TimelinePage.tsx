@@ -178,30 +178,39 @@ const TimelinePage: React.FC = () => {
                 icon={<Search className="text-neutral-400" size={18} />}
               />
             </div>
-            <div className="flex gap-2">
-              <Link to="/event/new">
-                <Button
-                  variant="primary"
-                  icon={<Plus size={18} />}
-                >
-                  Ajouter un événement
-                </Button>
-              </Link>
-              <div className="flex gap-2">
-                <Button
-                  variant="secondary"
-                  icon={<Eye size={18} />}
-                  onClick={() => setShowPDF(true)}
-                >
-                  Aperçu PDF
-                </Button>
-                <TimelinePDF 
-                  events={filteredEvents} 
-                  mode="download"
-                  fileName={`chronologie-familiale-${format(new Date(), 'yyyy-MM-dd')}.pdf`}
-                />
-              </div>
-            </div>
+            <div className="flex flex-wrap justify-center items-stretch gap-3 w-full sm:w-auto">
+  <Link to="/event/new" className="flex-1 min-w-0 sm:flex-none">
+    <Button
+      variant="primary"
+      icon={<Plus size={18} />}
+      className="w-full text-sm sm:text-base"
+    >
+      Ajouter un événement
+    </Button>
+  </Link>
+
+  <div className="flex-1 min-w-0 sm:flex-none">
+    <Button
+      variant="secondary"
+      icon={<Eye size={18} />}
+      onClick={() => setShowPDF(true)}
+      className="w-full text-sm sm:text-base"
+    >
+      Aperçu PDF
+    </Button>
+  </div>
+
+  {/* Si TimelinePDF rend un <button>, expose-lui une prop pour la classe ; sinon garde l'enveloppe */}
+  <div className="flex-1 min-w-0 sm:flex-none">
+    <TimelinePDF
+      events={filteredEvents}
+      mode="download"
+      fileName={`chronologie-familiale-${format(new Date(), 'yyyy-MM-dd')}.pdf`}
+      buttonClassName="w-full text-sm sm:text-base"   // ← si supporté
+    />
+  </div>
+</div>
+
           </div>
 
           <div className="text-center mb-12">
