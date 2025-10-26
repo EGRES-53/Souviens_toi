@@ -206,7 +206,6 @@ const TimelinePage: React.FC = () => {
       events={filteredEvents}
       mode="download"
       fileName={`chronologie-familiale-${format(new Date(), 'yyyy-MM-dd')}.pdf`}
-      buttonClassName="w-full text-sm sm:text-base"   // ← si supporté
     />
   </div>
 </div>
