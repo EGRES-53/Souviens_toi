@@ -14,6 +14,9 @@ import {
   Database,
   RefreshCw
 } from 'lucide-react';
+import { createFullBackup } from '../lib/backup';
+import { fetchActivityLogs, exportLogs } from '../lib/logs';
+import { generateReport, downloadReport } from '../lib/reports';
 
 interface UserStats {
   email: string;
@@ -167,6 +170,48 @@ const AdminDashboard: React.FC = () => {
       default: return '⚪ Inconnu';
     }
   };
+const [backupLoading, setBackupLoading] = useState(false);
+const [reportLoading, setReportLoading] = useState(false);
+
+const handleViewLogs = async () => {
+  try {
+    const logs = await fetchActivityLogs(100);
+    exportLogs(logs);
+    showToast('Logs téléchargés avec succès', 'success');
+  } catch (error) {
+    console.error('Erreur lors de la récupération des logs:', error);
+    showToast('Erreur lors de la récupération des logs', 'error');
+  }
+};
+
+const handleCreateBackup = async () => {
+  try {
+    setBackupLoading(true);
+    const backup = await createFullBackup();
+    if (backup) {
+      showToast('Sauvegarde créée et téléchargée avec succès', 'success');
+    }
+  } catch (error) {
+    console.error('Erreur lors de la création de la sauvegarde:', error);
+    showToast('Erreur lors de la création de la sauvegarde', 'error');
+  } finally {
+    setBackupLoading(false);
+  }
+};
+
+const handleGenerateReport = async () => {
+  try {
+    setReportLoading(true);
+    const report = await generateReport();
+    downloadReport(report);
+    showToast('Rapport généré et téléchargé avec succès', 'success');
+  } catch (error) {
+    console.error('Erreur lors de la génération du rapport:', error);
+    showToast('Erreur lors de la génération du rapport', 'error');
+  } finally {
+    setReportLoading(false);
+  }
+};
 
   if (loading) {
     return (
@@ -327,47 +372,64 @@ const AdminDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-lg shadow-vintage p-6 border border-primary-100">
-            <h3 className="text-lg font-serif font-bold mb-4 flex items-center">
-              <Eye className="h-5 w-5 mr-2 text-primary-600" />
-              Surveillance
-            </h3>
-            <p className="text-sm text-neutral-600 mb-4">
-              Surveille l'activité familiale en temps réel
-            </p>
-            <Button variant="outline" size="sm" className="w-full">
-              Voir les Logs
-            </Button>
-          </div>
+       {/* Quick Actions */}
+<div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+  <div className="bg-white rounded-lg shadow-vintage p-6 border border-primary-100">
+    <h3 className="text-lg font-serif font-bold mb-4 flex items-center">
+      <Eye className="h-5 w-5 mr-2 text-primary-600" />
+      Surveillance
+    </h3>
+    <p className="text-sm text-neutral-600 mb-4">
+      Surveille l'activité familiale en temps réel
+    </p>
+    <Button 
+      variant="outline" 
+      size="sm" 
+      className="w-full"
+      onClick={() => handleViewLogs()}
+    >
+      Voir les Logs
+    </Button>
+  </div>
 
-          <div className="bg-white rounded-lg shadow-vintage p-6 border border-primary-100">
-            <h3 className="text-lg font-serif font-bold mb-4 flex items-center">
-              <Database className="h-5 w-5 mr-2 text-primary-600" />
-              Sauvegarde
-            </h3>
-            <p className="text-sm text-neutral-600 mb-4">
-              Crée une sauvegarde des données familiales
-            </p>
-            <Button variant="primary" size="sm" className="w-full">
-              Backup Maintenant
-            </Button>
-          </div>
+  <div className="bg-white rounded-lg shadow-vintage p-6 border border-primary-100">
+    <h3 className="text-lg font-serif font-bold mb-4 flex items-center">
+      <Database className="h-5 w-5 mr-2 text-primary-600" />
+      Sauvegarde
+    </h3>
+    <p className="text-sm text-neutral-600 mb-4">
+      Crée une sauvegarde des données familiales
+    </p>
+    <Button 
+      variant="primary" 
+      size="sm" 
+      className="w-full"
+      onClick={() => handleCreateBackup()}
+      isLoading={backupLoading}
+    >
+      Backup Maintenant
+    </Button>
+  </div>
 
-          <div className="bg-white rounded-lg shadow-vintage p-6 border border-primary-100">
-            <h3 className="text-lg font-serif font-bold mb-4 flex items-center">
-              <BarChart3 className="h-5 w-5 mr-2 text-primary-600" />
-              Rapports
-            </h3>
-            <p className="text-sm text-neutral-600 mb-4">
-              Génère des rapports d'activité détaillés
-            </p>
-            <Button variant="secondary" size="sm" className="w-full">
-              Générer Rapport
-            </Button>
-          </div>
-        </div>
+  <div className="bg-white rounded-lg shadow-vintage p-6 border border-primary-100">
+    <h3 className="text-lg font-serif font-bold mb-4 flex items-center">
+      <BarChart3 className="h-5 w-5 mr-2 text-primary-600" />
+      Rapports
+    </h3>
+    <p className="text-sm text-neutral-600 mb-4">
+      Génère des rapports d'activité détaillés
+    </p>
+    <Button 
+      variant="secondary" 
+      size="sm" 
+      className="w-full"
+      onClick={() => handleGenerateReport()}
+      isLoading={reportLoading}
+    >
+      Générer Rapport
+    </Button>
+  </div>
+</div>
       </div>
     </div>
   );
